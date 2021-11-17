@@ -1,116 +1,126 @@
 package com.bridgeLabz;
 
-import java.util.Scanner;
-
 import java.util.*;
 
-public class EmployeeWage 
+public class EmployeeWage implements IComputeEmpWage 
 {
 	public final int IS_FULL_TIME = 1;
 	public final int IS_PART_TIME = 2;
-	int EMP_RATE_PER_HR [] = new int[10];
-	int MAX_WORKING_DAYS [] = new int[10];
-	int MAX_WORKING_HOURS [] = new int[10];
-	int n=0;
-	int totalWorkingHrs;
-	int totalWorkingDays;
-	int empHrs;
-	int dailyWage;
-	int totalWage[] = new int[10];
-	int empCheck;
-	
-	public void working()
+
+	private LinkedList<CompanyEmpWage> companyEmpWageList;
+	private Map<String, CompanyEmpWage> companyToEmpWageMap;
+
+	public EmployeeWage() 
 	{
-		totalWorkingHrs=totalWorkingHrs+empHrs;
-		totalWorkingDays++;
-		if((totalWorkingHrs<=MAX_WORKING_HOURS[n]) && (totalWorkingDays<=MAX_WORKING_DAYS[n]))
+		companyEmpWageList = new LinkedList<>();
+		companyToEmpWageMap = new HashMap<>();
+	}
+
+	public void addCompanyEmpWage(String company, int empRatePerHour, int maxWorkingDays, int maxWorkingHours) 
+	{
+		CompanyEmpWage companyEmpWage = new CompanyEmpWage(company, empRatePerHour, maxWorkingDays, maxWorkingHours);
+		companyEmpWageList.add(companyEmpWage);
+		companyToEmpWageMap.put(company, companyEmpWage);
+	}
+
+	public void computeEmpWage() 
+	{
+		for (int i = 0; i < companyEmpWageList.size(); i++) 
 		{
-			System.out.println("Randome Check is: "+empCheck);
-			System.out.println("Total Working Hours = "+totalWorkingHrs);
-			System.out.println("Day = "+totalWorkingDays);
-			dailyWage = empHrs*EMP_RATE_PER_HR[n];
-			System.out.println("Employee Daily Wage is: "+dailyWage);
-			totalWage[n] = totalWorkingHrs*EMP_RATE_PER_HR[n];
-			System.out.println("Total Wage is: "+totalWage[n]);
-			System.out.println(" ");
+			CompanyEmpWage companyEmpWage = companyEmpWageList.get(i);
+			companyEmpWage.setTotalEmpWage(this.computeEmpWage(companyEmpWage));
+			System.out.println(companyEmpWage);
 		}
 	}
-	public void limitations()
+
+	@Override
+	public int getTotalWage(String company)
 	{
-		while((totalWorkingHrs<=MAX_WORKING_HOURS[n]) && (totalWorkingDays<=MAX_WORKING_DAYS[n]))
+		return companyToEmpWageMap.get(company).totalEmpWage;
+	}
+
+	public int computeEmpWage(CompanyEmpWage companyEmpWage) 
+	{
+		// Variables
+		int empHrs = 0;
+		int totalWorkingHours = 0;
+		int totalWorkingDays = 0;
+		int dailyWage = 0;
+		int totalWage = 0;
+
+		// Computation
+		System.out.println("#############################");
+		System.out.println("Welcome to "+companyEmpWage.company);
+		System.out.println("#############################");
+		
+		while ((totalWorkingHours <= companyEmpWage.maxWorkingHours)
+				&& (totalWorkingDays <= companyEmpWage.maxWorkingDays)) 
 		{
-			
-			empCheck =(int) ((Math.random())*10)%3;
-			switch(empCheck)
-			{
+			int empCheck = (int) ((Math.random()) * 10) % 3;
+			switch (empCheck) {
 			case IS_FULL_TIME:
 				empHrs = 8;
-				working();
+				totalWorkingHours = totalWorkingHours + empHrs;
+				totalWorkingDays++;
+				if ((totalWorkingHours <= companyEmpWage.maxWorkingHours)
+						&& (totalWorkingDays <= companyEmpWage.maxWorkingDays)) 
+				{
+					System.out.println("Day#: " + totalWorkingDays);
+					System.out.println(+empCheck);
+					System.out.println("Full Time Employee");
+					System.out.println("Total Working Hours = " + totalWorkingHours);
+					dailyWage = empHrs * companyEmpWage.empRatePerHour;
+					System.out.println("Employee Daily Wage is: " + dailyWage);
+					totalWage = totalWorkingHours * companyEmpWage.empRatePerHour;
+					System.out.println("Employee Total Wage is: " + totalWage);
+				}
 				break;
-				
+
 			case IS_PART_TIME:
 				empHrs = 4;
-				working();
+				totalWorkingHours = totalWorkingHours + empHrs;
+				totalWorkingDays++;
+				if ((totalWorkingHours <= companyEmpWage.maxWorkingHours)
+						&& (totalWorkingDays <= companyEmpWage.maxWorkingDays)) {
+					System.out.println("Day#: " + totalWorkingDays);
+					System.out.println(+empCheck);
+					System.out.println("Part Time Employee");
+					System.out.println("Total Working Hours = " + totalWorkingHours);
+					dailyWage = empHrs * companyEmpWage.empRatePerHour;
+					System.out.println("Employee Daily Wage is: " + dailyWage);
+					totalWage = totalWorkingHours * companyEmpWage.empRatePerHour;
+					System.out.println("Employee Total Wage is: " + totalWage);
+				}
 				break;
-				
+
 			default:
-				empHrs=0;
-				working();
+				empHrs = 0;
+				totalWorkingHours = totalWorkingHours + empHrs;
+				totalWorkingDays++;
+				if ((totalWorkingHours <= companyEmpWage.maxWorkingHours)
+						&& (totalWorkingDays <= companyEmpWage.maxWorkingDays)) {
+					System.out.println("Day#: " + totalWorkingDays);
+					System.out.println(+empCheck);
+					System.out.println("Employee is Absent");
+					System.out.println("Total Working Hours = " + totalWorkingHours);
+					dailyWage = empHrs * companyEmpWage.empRatePerHour;
+					System.out.println("Employee Daily Wage is: " + dailyWage);
+					totalWage = totalWorkingHours * companyEmpWage.empRatePerHour;
+					System.out.println("Employee Total Wage is: " + totalWage);
+				}
 				break;
-				
 			}
 		}
+		return totalWorkingHours * companyEmpWage.empRatePerHour;
 	}
-	
-	public static void main(String[] args) 
-	{
-		EmployeeWage obj1=new EmployeeWage();
-		System.out.println("0. Exit");
-		System.out.println("1. Add Contact");
-		System.out.println("2. Show Total Wages Of All The Companies ");
-		System.out.println("Enter Your Choice: ");
-		Scanner sc = new Scanner(System.in);
-		int choice = sc.nextInt();
-		while(choice!=0)
-		{
-			switch(choice)
-			{
-			case 1:
-				obj1.totalWorkingHrs = 0;
-				obj1.totalWorkingDays = 0;
-				obj1.empHrs = 0;
-				obj1.n++;
-				for(int i=obj1.n; i<=obj1.n; i++)
-				{
-					System.out.println("Give The Values For Company "+i+" :");
-					System.out.println("Enter EMP_RATE_PER_HR :");
-					int emp_rate_per_hr = sc.nextInt();
-					System.out.println("Enter MAX_WORKING_DAYS :");
-					int max_working_days = sc.nextInt();
-					System.out.println("Enter MAX_WORKING_HOURS :");
-					int max_working_hours = sc.nextInt();
-					obj1.EMP_RATE_PER_HR [i] = emp_rate_per_hr;
-					obj1.MAX_WORKING_DAYS [i] = max_working_days;
-					obj1.MAX_WORKING_HOURS [i] = max_working_hours;
-					obj1.limitations();
-				}
-				break;
-			case 2:
-				for(int j=1; j<=obj1.n; j++)
-				{
-					System.out.println("Total Wage Of Company "+j+" is :"+obj1.totalWage[j]);
-				}
-				break;
-			default:
-				System.out.println("Wrong InPut");
-				break;				
-			}
-			System.out.println("0. Exit");
-			System.out.println("1. Add Contact");
-			System.out.println("2. Show Total Wages Of All The Companies ");
-			System.out.println("Enter Your Choice: ");
-			choice = sc.nextInt();
-		}
-		System.out.println("The Program Got Exit");
+
+	public static void main(String[] args) {
+		IComputeEmpWage employeeWage = new EmployeeWage();
+		employeeWage.addCompanyEmpWage("Reliance", 20, 20, 100);
+		employeeWage.addCompanyEmpWage("Heritage", 21, 22, 110);
+		employeeWage.addCompanyEmpWage("Vishal Mart", 22, 24, 120);
+		employeeWage.computeEmpWage();
+		System.out.println("#############################");
+		System.out.println("Total Wage for Reliance Company is: " + employeeWage.getTotalWage("Reliance"));
 	}
 }
